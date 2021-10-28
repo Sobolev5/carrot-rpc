@@ -1,0 +1,9 @@
+README.md
+setup.py
+carrot/__init__.py
+carrot/carrrot.py
+carrot_rpc.egg-info/PKG-INFO
+carrot_rpc.egg-info/SOURCES.txt
+carrot_rpc.egg-info/dependency_links.txt
+carrot_rpc.egg-info/requires.txt
+carrot_rpc.egg-info/top_level.txt
