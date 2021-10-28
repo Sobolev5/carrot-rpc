@@ -1,13 +1,13 @@
 Metadata-Version: 2.1
 Name: carrot-rpc
-Version: 0.1.0
+Version: 0.1.1
 Summary: Carrot it is a simple tool for RabbitMQ that allows you to make RPC calls.
 Home-page: https://github.com/Sobolev5/carrot-rpc
 Author: Sobolev Andrey
 Author-email: email.asobolev@gmail.com
 License: UNKNOWN
 Description: # Carrot
-        Carrot it is a simple tool for RabbitMQ that allows you to make RPC calls.
+        Carrot it is a python asyncio RPC server/client for RabbitMQ that allows you to make RPC calls.
         
         ```no-highlight
         https://github.com/Sobolev5/carrot-rpc
