@@ -1,2 +1,0 @@
-simple_print>=1.5
-aiormq==5.2.2
