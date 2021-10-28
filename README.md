@@ -2,7 +2,7 @@
 Carrot it is a simple tool for RabbitMQ that allows you to make RPC calls.
 
 ```no-highlight
-https://github.com/Sobolev5/carrot
+https://github.com/Sobolev5/carrot-rpc
 ```
 
 ## Install
