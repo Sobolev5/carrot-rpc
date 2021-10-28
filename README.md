@@ -1,5 +1,5 @@
 # Carrot
-Carrot it is a simple asyncio RPC server/client for RabbitMQ that allows you to make RPC calls.
+Carrot it is a python asyncio RPC server/client for RabbitMQ that allows you to make RPC calls.
 
 ```no-highlight
 https://github.com/Sobolev5/carrot-rpc
