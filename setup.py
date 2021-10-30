@@ -15,7 +15,7 @@ setuptools.setup(
     author='Sobolev Andrey',
     url="https://github.com/Sobolev5/carrot-rpc",        
     author_email='email.asobolev@gmail.com',
-    description='Carrot it is a simple tool for RabbitMQ that allows you to make RPC calls.',
+    description='Carrot it is a python asyncio RPC server/client for RabbitMQ that allows you to make RPC calls.',
     long_description=long_description,
     long_description_content_type="text/markdown",
     packages=setuptools.find_packages(exclude=[".git", ".gitignore"]),
