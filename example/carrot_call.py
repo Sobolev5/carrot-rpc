@@ -7,9 +7,9 @@ AMQP_URI = "amqp://admin:password@127.0.0.1/vhost"
 
 
 async def call_sum_a_and_b():
-    # test_carrot_rpc - function in another microservice (we want to call it)
+    # call_sum_a_and_b - function in another microservice (we want to call it)
   
-    sprint(f"call_test_carrot_rpc", с="green", s=1, p=1)
+    sprint(f"call_sum_a_and_b", с="green", s=1, p=1)
 
     dct = {}
     dct["who_am_i"] = "i'm function which call RPC in another microservice"
