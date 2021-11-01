@@ -85,6 +85,10 @@ loop.run_forever()
 # to run use:  python carrot_ask.py
 ```
 
+## Starlette integration (full working example with docker-compose)
+https://github.com/Sobolev5/Starlette-plus-RabbitMQ
+
+
 ## Buy me a coffee [thanks]
 ```no-highlight
 0x6817b29f6a25B7BaE42158FAFad7b782415e4209 ETH
