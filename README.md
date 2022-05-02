@@ -91,8 +91,7 @@ https://github.com/Sobolev5/Starlette-plus-RabbitMQ
 
 ## Buy me a coffee [thanks]
 ```no-highlight
-0x6817b29f6a25B7BaE42158FAFad7b782415e4209 ETH
-TZ1Hs1tkpPJFrPzmvo8xtHEKErXniV3x21 TRC (TRON)
+TPbvvhqZsEuKCLEAWMAERgw7f82eGeU389 TRC (TRON)
 ```
 
 
