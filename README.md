@@ -89,11 +89,10 @@ loop.run_forever()
 https://github.com/Sobolev5/Starlette-plus-RabbitMQ
 
 
-## Buy me a coffee [thanks]
-```no-highlight
-TPbvvhqZsEuKCLEAWMAERgw7f82eGeU389 TRC (TRON)
-```
-
+## P.S.
+Try my free service for developers [Workhours.space](https://workhours.space/). 
+It's time tracker with simple interface, powerful functionality such as automatic payroll calculation, 
+telegram bot timer, easy web2 and web3 auth, and more. Enjoy. 
 
 
 
