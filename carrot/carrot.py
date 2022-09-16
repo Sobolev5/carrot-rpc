@@ -2,8 +2,7 @@ import asyncio
 import json
 import uuid
 import aiormq
-from simple_print import sprint
-
+import logging
 
 class Carrot:
     def __init__(self, AMQP_URI):
@@ -52,14 +51,14 @@ def carrot_ask(func):
         try:
             incoming_dict = json.loads(message.body.decode())  
         except Exception as error_message:
-            sprint(f"ERROR REQUEST. Dictionary required. Request body={message.body}. Error={error_message}", c="red", s=1, p=1)
+            logging.exception(f"Dictionary required. Request body={message.body}. Error={error_message}")
         
         outcoming_dict = None
         if incoming_dict:
             try:
                 outcoming_dict = await func(incoming_dict)
             except Exception as error_message:
-                sprint(f"ERROR RESPONSE. Error {error_message}", c="red", s=1, p=1)
+                logging.exception(f"Error {error_message}")
 
         if outcoming_dict and isinstance(outcoming_dict, dict):
             outcoming_dict_bytes = json.dumps(outcoming_dict).encode()
@@ -72,6 +71,6 @@ def carrot_ask(func):
             await message.channel.basic_ack(message.delivery.delivery_tag)
         else:
             if outcoming_dict is not None:
-                sprint(f"ERROR RESPONSE. Function with decorator @carrot_ask must return a dictionary", c="red", s=1, p=1)
+                logging.exception(f"Function with decorator @carrot_ask must return a dictionary")
 
     return wrapped

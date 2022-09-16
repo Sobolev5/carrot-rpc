@@ -1,9 +1,8 @@
 import asyncio
 from carrot import Carrot
 from simple_print import sprint
+from settings import AMQP_URI
 
-
-AMQP_URI = "amqp://admin:password@127.0.0.1/vhost"
 
 
 async def call_sum_a_and_b():
