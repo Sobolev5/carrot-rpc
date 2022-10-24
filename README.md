@@ -42,7 +42,6 @@ async def call_sum_a_and_b():
 
     # get response dict from microservice «microservice_sum»
     sprint(f'Sum a and b: {response_from_another_microservice["sum"]}', c="yellow", s=1, p=1)
-    return JSONResponse({"sum (response from microservice_sum)": response_from_another_microservice["sum"]})  
 
 
 loop = asyncio.get_event_loop()
