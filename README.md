@@ -41,7 +41,7 @@ async def call_sum_a_and_b():
     # another_microservice:sum_a_and_b: second arg it routing key (through default AMQP exchange) 
 
     # get response dict from microservice «microservice_sum»
-    sprint(f'Sum a and b: {response_from_another_microservice["sum"]}', c="yellow", s=1, p=1)
+    sprint(f'Sum a and b: {response_from_another_microservice["sum"]}', c="yellow", p=1, f=1)
 
 
 loop = asyncio.get_event_loop()
@@ -74,7 +74,7 @@ class SumAAndB(BaseModel):
 # decorate called function with pydantic schema
 @carrot_ask(SumAAndB)
 async def sum_a_and_b(incoming_dict: dict) -> dict:
-    sprint(incoming_dict, c="yellow", s=1, p=1)
+    sprint(incoming_dict, c="yellow", p=1, f=1)
     dct = {}
     dct["caller"] = "i am sum_a_and_b function mounted on microservice_sum"
     dct["sum"] = incoming_dict["number_a"] + incoming_dict["number_b"]
@@ -84,7 +84,7 @@ async def sum_a_and_b(incoming_dict: dict) -> dict:
 async def amqp_router():
     connection = await aiormq.connect(AMQP_URI)
     channel = await connection.channel()
-    sprint(f"AMQP:     ready [yes]", c="green", s=1, p=1)
+    sprint(f"AMQP:     ready [yes]", c="green", p=1, f=1)
     sum_a_and_b__declared = await channel.queue_declare(f"microservice_sum:sum_a_and_b", durable=False)
     await channel.basic_consume(sum_a_and_b__declared.queue, sum_a_and_b, no_ack=False)  
     
