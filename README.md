@@ -1,5 +1,7 @@
 # Carrot
-Carrot it is a python asyncio RPC server/client for RabbitMQ that allows you to make RPC calls.
+Carrot it is a python asyncio RPC server/client for RabbitMQ that allows you to make RPC calls.  
+*Note:* This project in active development and can be unstable.  
+You can see live example here: http://5.187.4.179:8588/
 
 ```no-highlight
 https://github.com/Sobolev5/carrot-rpc
@@ -11,82 +13,99 @@ To install run:
 pip install carrot-rpc
 ```
 
-## Example (microservice A which call)
+
+## Microservice A which call
 
 ```python
 import asyncio
 from carrot import Carrot
 from simple_print import sprint
 
-
+# set amqp connection:
 AMQP_URI = "amqp://admin:password@127.0.0.1/vhost"
 
-
+# defer function which call microservice «microservice_sum»:
 async def call_sum_a_and_b():
-    # sum_a_and_b - function in another microservice (we want to call it)
   
-    sprint(f"call_test_carrot_rpc", с="green", s=1, p=1)
-
+    # make dict request:
     dct = {}
-    dct["who_am_i"] = "i'm function which call RPC in another microservice"
-    dct["a"] = 1
-    dct["b"] = 2
+    dct["caller"] = "Function on microservice_interface which call RPC in microservice_sum"
+    dct["number_a"] = int(data["number_a"])
+    dct["number_b"] = int(data["number_b"])
 
+    # defer carrot instance and make rpc call:
     carrot = await Carrot(AMQP_URI).connect()
-    response_from_another_microservice = await carrot.call(dct, "another_microservice:sum_a_and_b")    
+    response_from_another_microservice = await carrot.call(dct, "microservice_sum:sum_a_and_b")    
 
     # dct: first arg is dict with data
-    # "another_microservice:sum_a_and_b": second arg it is name of routing key (through default AMQP exchange) 
+    # another_microservice:sum_a_and_b: second arg it routing key (through default AMQP exchange) 
 
+    # get response dict from microservice «microservice_sum»
     sprint(f'Sum a and b: {response_from_another_microservice["sum"]}', c="yellow", s=1, p=1)
+    return JSONResponse({"sum (response from microservice_sum)": response_from_another_microservice["sum"]})  
 
 
 loop = asyncio.get_event_loop()
 loop.run_until_complete(call_sum_a_and_b())
 
-# to run use:  python carrot_call.py
 ```
 
 
-## Example (microservice B which ask)
+## Microservice B which ask
 
-Send message to any group from any part of your code:
 ```python
 import asyncio
 import aiormq
+from pydantic import BaseModel
 from carrot import carrot_ask
 from simple_print import sprint
+from fastapi import FastAPI
+from fastapi import APIRouter
 
 
+# set amqp connection:
 AMQP_URI = "amqp://admin:password@127.0.0.1/vhost"
 
+# make pydantic schema:
+class SumAAndB(BaseModel):
+    caller: str
+    a: int
+    b: int
 
-@carrot_ask
+# decorate called function with pydantic schema
+@carrot_ask(SumAAndB)
 async def sum_a_and_b(incoming_dict: dict) -> dict:
     sprint(incoming_dict, c="yellow", s=1, p=1)
     dct = {}
-    dct["who_am_i"] = "i am rpc function mounted on another microservice"
-    dct["sum"] = incoming_dict["a"] + incoming_dict["b"]
+    dct["caller"] = "i am sum_a_and_b function mounted on microservice_sum"
+    dct["sum"] = incoming_dict["number_a"] + incoming_dict["number_b"]
     return dct
 
-
-async def rpc_subscriptions():
+# make amqp router:
+async def amqp_router():
     connection = await aiormq.connect(AMQP_URI)
     channel = await connection.channel()
-    sprint(f"AMQP RPC:     ready [yes]", c="green", s=1, p=1)
-    sum_a_and_b__declared = await channel.queue_declare(f"another_microservice:sum_a_and_b", durable=False)
+    sprint(f"AMQP:     ready [yes]", c="green", s=1, p=1)
+    sum_a_and_b__declared = await channel.queue_declare(f"microservice_sum:sum_a_and_b", durable=False)
     await channel.basic_consume(sum_a_and_b__declared.queue, sum_a_and_b, no_ack=False)  
     
 
-loop = asyncio.get_event_loop()
-loop.create_task(rpc_subscriptions())
-loop.run_forever()
+class App(FastAPI):
+    def __init__(self, *args, **kwargs):
+        loop = asyncio.get_event_loop()
+        loop.create_task(amqp_router())
+        super().__init__(*args, **kwargs)
 
-# to run use:  python carrot_ask.py
+app = App()
+
 ```
 
-## Starlette integration (full working example with docker-compose)
-https://github.com/Sobolev5/Starlette-plus-RabbitMQ
+## Full working example with docker-compose
+https://github.com/Sobolev5/FastAPI-plus-RabbitMQ
+
+
+## TODO
+tests, docstrings, extended documentation
 
 
 # Try my free time tracker
