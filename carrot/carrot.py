@@ -35,8 +35,8 @@ class Carrot:
         if self.DEBUG:
             sprint(f"Carrot [DEBUG MODE] > on_response [OK] message.body={message.body}", c="yellow", i=4, f=1)         
 
-    async def call(self, outcoming_message_dict: dict, routing_key: str, no_reply=False) -> Union[dict, None]:
-        correlation_id = "null" if no_reply else str(uuid.uuid4())
+    async def call(self, outcoming_message_dict:dict, routing_key:str, without_reply:bool=False, timeout:int=5) -> Union[dict, None]:
+        correlation_id = "null" if without_reply else str(uuid.uuid4())
         future = self.loop.create_future()
         self.futures[correlation_id] = future
         outcoming_message_bytes = orjson.dumps(outcoming_message_dict)
@@ -46,20 +46,24 @@ class Carrot:
             properties=aiormq.spec.Basic.Properties(
                 content_type="text/plain",
                 correlation_id=correlation_id,
-                reply_to="null" if no_reply else self.callback_queue,
+                reply_to="null" if without_reply else self.callback_queue,
             ),
         )
 
         if self.DEBUG:
-            reply_to = "null" if no_reply else self.callback_queue
+            reply_to = "null" if without_reply else self.callback_queue
             sprint(f"Carrot [DEBUG MODE] > Call [OK] routing_key={routing_key} correlation_id={correlation_id} reply_to={reply_to}", c="yellow", i=4, f=1)  
 
-        if no_reply:
+        if without_reply:
             if self.DEBUG:
-                sprint(f"Carrot [DEBUG MODE] > Finish [OK] no_reply={no_reply}", c="magenta", i=4, f=1)                
+                sprint(f"Carrot [DEBUG MODE] > Finish [OK] without_reply={without_reply}", c="magenta", i=4, f=1)                
             return None
         else: 
-            body = await future
+            try:
+                body = await asyncio.wait_for(future, timeout=timeout)
+            except asyncio.TimeoutError:
+                return {"error": f"remote service is not response timeout={timeout}"}
+            
             incoming_message_dict = orjson.loads(body.decode())
             if self.DEBUG:
                 sprint(f"Carrot [DEBUG MODE] > Finish [OK] incoming_message_dict={incoming_message_dict}", c="magenta", i=4, f=1)             

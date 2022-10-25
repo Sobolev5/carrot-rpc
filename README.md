@@ -24,7 +24,7 @@ from simple_print import sprint
 # set amqp connection:
 AMQP_URI = "amqp://admin:password@127.0.0.1/vhost"
 
-# defer function which call microservice «microservice_sum»:
+# defer function which call «MICROSERVICE_SUM»:
 async def call_sum_a_and_b():
   
     # make dict request:
@@ -35,13 +35,17 @@ async def call_sum_a_and_b():
 
     # defer carrot instance and make rpc call:
     carrot = await Carrot(AMQP_URI).connect()
-    response_from_another_microservice = await carrot.call(dct, "microservice_sum:sum_a_and_b")    
+    response_from_another_microservice = await carrot.call(dct, "microservice_sum:sum_a_and_b", timeout=5)    
 
-    # dct: first arg is dict with data
-    # another_microservice:sum_a_and_b: second arg it routing key (through default AMQP exchange) 
-
-    # get response dict from microservice «microservice_sum»
+    # first arg is dict with data
+    # second arg it routing key (through default AMQP exchange) 
+    # third arg is optional (response timeout in seconds, 5 seconds by default) 
+    # get response dict from microservice «MICROSERVICE_SUM»
     sprint(f'Sum a and b: {response_from_another_microservice["sum"]}', c="yellow", p=1, f=1)
+
+    # you can send request to another microservice without reply (like standart call):
+    await carrot.call(dct, "microservice_sum:sum_a_and_b", without_reply=True)
+    # in this case «MICROSERVICE_SUM» just calculate sum and do not send response to caller.   
 
 
 loop = asyncio.get_event_loop()
@@ -68,8 +72,8 @@ AMQP_URI = "amqp://admin:password@127.0.0.1/vhost"
 # make pydantic schema:
 class SumAAndB(BaseModel):
     caller: str
-    a: int
-    b: int
+    number_a: int
+    number_b: int
 
 # decorate called function with pydantic schema
 @carrot_ask(SumAAndB)
