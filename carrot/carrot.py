@@ -6,6 +6,7 @@ import aiormq
 import functools
 from orjson import JSONDecodeError
 from pydantic import ValidationError
+from typing import Union
 
 
 class Carrot:
@@ -34,7 +35,7 @@ class Carrot:
         if self.DEBUG:
             sprint(f"Carrot [DEBUG MODE] > on_response [OK] message.body={message.body}", c="yellow", i=4, f=1)         
 
-    async def call(self, outcoming_message_dict: dict, routing_key: str, no_reply=False) -> dict | None:
+    async def call(self, outcoming_message_dict: dict, routing_key: str, no_reply=False) -> Union[dict, None]:
         correlation_id = "null" if no_reply else str(uuid.uuid4())
         future = self.loop.create_future()
         self.futures[correlation_id] = future
