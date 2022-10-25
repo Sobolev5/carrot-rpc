@@ -36,10 +36,10 @@ async def call_sum_a_and_b():
     # defer carrot instance and make rpc call:
     carrot = await Carrot(AMQP_URI).connect()
     response_from_another_microservice = await carrot.call(dct, "microservice_sum:sum_a_and_b", timeout=5)    
-
     # first arg is dict with data
     # second arg it routing key (through default AMQP exchange) 
     # third arg is optional (response timeout in seconds, 5 seconds by default) 
+
     # get response dict from microservice «MICROSERVICE_SUM»
     sprint(f'Sum a and b: {response_from_another_microservice["sum"]}', c="yellow", p=1, f=1)
 
