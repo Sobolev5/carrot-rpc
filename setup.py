@@ -3,7 +3,7 @@ import sys
 import setuptools
 
 __author__ = 'Sobolev Andrey <email.asobolev@gmail.com>'
-__version__ = '0.2.8'
+__version__ = '0.3'
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
@@ -11,7 +11,7 @@ with open("README.md", "r") as fh:
 setuptools.setup(
     name='carrot-rpc',
     version=__version__,
-    install_requires=['aiormq>=6.4.2', 'simple-print>=1.4.7', 'orjson>=3.8.0', 'pydantic>=1.10.2'],
+    install_requires=['aiormq>=6.4.2', 'simple-print>=1.7.0', 'orjson>=3.8.0', 'pydantic>=1.10.2'],
     author='Sobolev Andrey',
     url="https://github.com/Sobolev5/carrot-rpc",        
     author_email='email.asobolev@gmail.com',

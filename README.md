@@ -18,7 +18,7 @@ pip install carrot-rpc
 
 ```python
 import asyncio
-from carrot import Carrot
+from carrot import CarrotCall
 from simple_print import sprint
 
 # set amqp connection:
@@ -34,14 +34,14 @@ async def call_sum_a_and_b():
     dct["number_b"] = int(data["number_b"])
 
     # defer carrot instance and make rpc call:
-    carrot = await Carrot(AMQP_URI).connect()
+    carrot = await CarrotCall(AMQP_URI).connect()
     response_from_another_microservice = await carrot.call(dct, "microservice_sum:sum_a_and_b", timeout=5)    
     # first arg is dict with data
     # second arg it routing key (through default AMQP exchange) 
     # third arg is optional (response timeout in seconds, 5 seconds by default) 
 
     # get response dict from microservice «MICROSERVICE_SUM»
-    sprint(f'Sum a and b: {response_from_another_microservice["sum"]}', c="yellow", p=1, f=1)
+    sprint(f'Sum a and b: {response_from_another_microservice["sum"]}', c="yellow")
 
     # you can send request to another microservice without reply (like standart call):
     await carrot.call(dct, "microservice_sum:sum_a_and_b", without_reply=True)
@@ -78,7 +78,7 @@ class SumAAndB(BaseModel):
 # decorate called function with pydantic schema
 @carrot_ask(SumAAndB)
 async def sum_a_and_b(incoming_dict: dict) -> dict:
-    sprint(incoming_dict, c="yellow", p=1, f=1)
+    sprint(incoming_dict, c="green")
     dct = {}
     dct["caller"] = "i am sum_a_and_b function mounted on microservice_sum"
     dct["sum"] = incoming_dict["number_a"] + incoming_dict["number_b"]
@@ -88,7 +88,7 @@ async def sum_a_and_b(incoming_dict: dict) -> dict:
 async def amqp_router():
     connection = await aiormq.connect(AMQP_URI)
     channel = await connection.channel()
-    sprint(f"AMQP:     ready [yes]", c="green", p=1, f=1)
+    sprint(f"AMQP:     ready [yes]", c="green")
     sum_a_and_b__declared = await channel.queue_declare(f"microservice_sum:sum_a_and_b", durable=False)
     await channel.basic_consume(sum_a_and_b__declared.queue, sum_a_and_b, no_ack=False)  
     
@@ -110,9 +110,6 @@ https://github.com/Sobolev5/FastAPI-plus-RabbitMQ
 ## TODO
 tests, docstrings, extended documentation
 
-
-# Try my free time tracker
-My free time tracker for developers [Workhours.space](https://workhours.space/). 
 
 
 
