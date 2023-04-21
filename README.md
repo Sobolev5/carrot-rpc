@@ -104,11 +104,12 @@ app = App()
 ```
 
 ## Full working example with docker-compose
-https://github.com/Sobolev5/FastAPI-plus-RabbitMQ
+https://github.com/Sobolev5/Carrot-RPC-Example
 
 
 ## TODO
 tests, docstrings, extended documentation
+
 
 
 
