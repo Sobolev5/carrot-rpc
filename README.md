@@ -103,9 +103,11 @@ app = App()
 
 ```
 
-## Full working example with docker-compose
+## Full working example [1]
 https://github.com/Sobolev5/Carrot-RPC-Example
 
+## Full working example [2]
+https://github.com/Sobolev5/LordaeronChat
 
 ## TODO
 tests, docstrings, extended documentation
