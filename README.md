@@ -1,7 +1,9 @@
 # Carrot
 Carrot-RPC it is a python asyncio RPC server/client for RabbitMQ that allows you to make RPC calls.  
 *Note:* This project in active development and can be unstable.  
-You can see live example here: http://5.187.4.179:5888/
+You can see live examples here:     
+http://5.187.4.179:5888/  
+http://89.108.77.63:1025/  
 
 ```no-highlight
 https://github.com/Sobolev5/carrot-rpc
