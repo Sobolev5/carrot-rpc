@@ -58,7 +58,7 @@ from fastapi import FastAPI
 from fastapi import APIRouter
 
 
-# set amqp connection:
+# set AMQP connection:
 AMQP_URI = "amqp://admin:password@127.0.0.1/vhost"
 
 # make pydantic schema:
