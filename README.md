@@ -32,7 +32,7 @@ async def call_sum_a_and_b():
     d["number_b"] = 2
 
     # get response dict from microservice «BB»
-    carrot = await CarrotCall(AMQP_URI).connect()
+    carrot = await CarrotCall(AMQP_URI=AMQP_URI).connect()
     response_from_BB = await carrot.call(d, "BB:sum_a_and_b", timeout=5)    
     print(response_from_BB) # {"sum": 3}
 
@@ -55,7 +55,6 @@ import aiormq
 from pydantic import BaseModel
 from carrot import carrot_ask
 from fastapi import FastAPI
-from fastapi import APIRouter
 
 
 # defer AMQP connection:
@@ -67,10 +66,16 @@ class SumAAndB(BaseModel):
     number_a: int
     number_b: int
 
-# protect called function with pydantic schema
+# you can protect called function with pydantic schema
 @carrot_ask(SumAAndB)
-async def sum_a_and_b(incoming_dict: dict) -> dict:
-    print(incoming_dict, c="green")
+async def sum_a_and_b(sum_model: BaseModel) -> dict:
+    dct = {}
+    dct["sum"] = sum_model.number_a + sum_model.number_b
+    return dct
+
+# or use plain decorator carrot_ask() without protection
+@carrot_ask()
+async def sum_a_and_b_without_protect(incoming_dict: dict) -> dict:
     dct = {}
     dct["sum"] = incoming_dict["number_a"] + incoming_dict["number_b"]
     return dct
@@ -79,7 +84,6 @@ async def sum_a_and_b(incoming_dict: dict) -> dict:
 async def amqp_router():
     connection = await aiormq.connect(AMQP_URI)
     channel = await connection.channel()
-    print(f"AMQP:     ready [yes]", c="green")
     sum_a_and_b_queue = await channel.queue_declare(f"BB:sum_a_and_b", durable=False)
     await channel.basic_consume(sum_a_and_b_queue.queue, sum_a_and_b, no_ack=False)  
     
@@ -91,9 +95,9 @@ async def startup_aiormq_router():
     loop.create_task(amqp_router())
 ```
 
-## Live examples 
-http://5.187.4.179:5888/  (https://github.com/Sobolev5/Carrot-RPC-Example)  
-http://89.108.77.63:1025/  (https://github.com/Sobolev5/LordaeronChat)  
+## Live example
+http://5.187.4.179:14000  (https://github.com/Sobolev5/Carrot-RPC-Example)  
+ 
 
 
 
