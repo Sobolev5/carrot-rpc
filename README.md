@@ -1,9 +1,6 @@
 # Carrot
 Carrot-RPC it is a python asyncio RPC server/client for RabbitMQ that allows you to make RPC calls.  
-*Note:* This project in active development and can be unstable.  
-You can see live examples here:     
-http://5.187.4.179:5888/  (https://github.com/Sobolev5/Carrot-RPC-Example)  
-http://89.108.77.63:1025/  (https://github.com/Sobolev5/LordaeronChat)  
+
 
 ```no-highlight
 https://github.com/Sobolev5/carrot-rpc
@@ -16,38 +13,32 @@ pip install carrot-rpc
 ```
 
 
-## Microservice A which call
+## Microservice AA which call
 
 ```python
 import asyncio
 from carrot import CarrotCall
-from simple_print import sprint
 
-# set amqp connection:
+# defer AMQP connection:
 AMQP_URI = "amqp://admin:password@127.0.0.1/vhost"
 
-# defer function which call «MICROSERVICE_SUM»:
+# defer function which call microservice «BB»:
 async def call_sum_a_and_b():
   
     # make dict request:
-    dct = {}
-    dct["caller"] = "Function on microservice_interface which call RPC in microservice_sum"
-    dct["number_a"] = int(data["number_a"])
-    dct["number_b"] = int(data["number_b"])
+    d = {}
+    d["info"] = "Microservice AA call"
+    d["number_a"] = 1
+    d["number_b"] = 2
 
-    # defer carrot instance and make rpc call:
+    # get response dict from microservice «BB»
     carrot = await CarrotCall(AMQP_URI).connect()
-    response_from_another_microservice = await carrot.call(dct, "microservice_sum:sum_a_and_b", timeout=5)    
-    # first arg is dict with data
-    # second arg it routing key (through default AMQP exchange) 
-    # third arg is optional (response timeout in seconds, 5 seconds by default) 
-
-    # get response dict from microservice «MICROSERVICE_SUM»
-    sprint(f'Sum a and b: {response_from_another_microservice["sum"]}', c="yellow")
+    response_from_BB = await carrot.call(d, "BB:sum_a_and_b", timeout=5)    
+    sprint(response_from_BB) # {"sum": 3}
 
     # you can send request to another microservice without reply (like standart call):
-    await carrot.call(dct, "microservice_sum:sum_a_and_b", without_reply=True)
-    # in this case «MICROSERVICE_SUM» just calculate sum and do not send response to caller.   
+    await carrot.call(dct, "BB:sum_a_and_b", without_reply=True)
+    # in this case «BB» just calculate sum and do not send response to caller.   
 
 
 loop = asyncio.get_event_loop()
@@ -56,7 +47,7 @@ loop.run_until_complete(call_sum_a_and_b())
 ```
 
 
-## Microservice B which ask
+## Microservice BB which ask
 
 ```python
 import asyncio
@@ -77,12 +68,11 @@ class SumAAndB(BaseModel):
     number_a: int
     number_b: int
 
-# decorate called function with pydantic schema
+# protect called function with pydantic schema
 @carrot_ask(SumAAndB)
 async def sum_a_and_b(incoming_dict: dict) -> dict:
     sprint(incoming_dict, c="green")
     dct = {}
-    dct["caller"] = "i am sum_a_and_b function mounted on microservice_sum"
     dct["sum"] = incoming_dict["number_a"] + incoming_dict["number_b"]
     return dct
 
@@ -91,28 +81,21 @@ async def amqp_router():
     connection = await aiormq.connect(AMQP_URI)
     channel = await connection.channel()
     sprint(f"AMQP:     ready [yes]", c="green")
-    sum_a_and_b__declared = await channel.queue_declare(f"microservice_sum:sum_a_and_b", durable=False)
-    await channel.basic_consume(sum_a_and_b__declared.queue, sum_a_and_b, no_ack=False)  
+    sum_a_and_b_queue = await channel.queue_declare(f"BB:sum_a_and_b", durable=False)
+    await channel.basic_consume(sum_a_and_b_queue.queue, sum_a_and_b, no_ack=False)  
     
+app = FastAPI()
 
-class App(FastAPI):
-    def __init__(self, *args, **kwargs):
-        loop = asyncio.get_event_loop()
-        loop.create_task(amqp_router())
-        super().__init__(*args, **kwargs)
-
-app = App()
-
+@app.on_event("startup")
+async def startup_aiormq_router():
+    """Запускаем роутер aiormq."""
+    loop = asyncio.get_running_loop()
+    loop.create_task(amqp_router())
 ```
 
-## Full working example [1]
-https://github.com/Sobolev5/Carrot-RPC-Example
-
-## Full working example [2]
-https://github.com/Sobolev5/LordaeronChat
-
-## TODO
-tests, docstrings, extended documentation
+## Live examples 
+http://5.187.4.179:5888/  (https://github.com/Sobolev5/Carrot-RPC-Example)  
+http://89.108.77.63:1025/  (https://github.com/Sobolev5/LordaeronChat)  
 
 
 
