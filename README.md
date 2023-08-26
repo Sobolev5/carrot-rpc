@@ -22,7 +22,7 @@ from carrot import CarrotCall
 # defer AMQP connection:
 AMQP_URI = "amqp://admin:password@127.0.0.1/vhost"
 
-# defer function which call microservice «BB»:
+# defer function which call microservice BB:
 async def call_sum_a_and_b():
   
     # make dict request:
@@ -31,14 +31,14 @@ async def call_sum_a_and_b():
     d["number_a"] = 1
     d["number_b"] = 2
 
-    # get response dict from microservice «BB»
+    # get response dict from microservice BB
     carrot = await CarrotCall(AMQP_URI=AMQP_URI).connect()
     response_from_BB = await carrot.call(d, "BB:sum_a_and_b", timeout=5)    
     print(response_from_BB) # {"sum": 3}
 
-    # you can send request to another microservice without reply (like standart call):
+    # you can send request to microservice BB without reply (like standart call):
     await carrot.call(dct, "BB:sum_a_and_b", without_reply=True)
-    # in this case «BB» just calculate sum and do not send response to caller.   
+    # in this case BB just calculate sum and do not send response to caller.   
 
 
 loop = asyncio.get_event_loop()
@@ -95,8 +95,8 @@ async def startup_aiormq_router():
     loop.create_task(amqp_router())
 ```
 
-## Live example
-http://5.187.4.179:14000  (https://github.com/Sobolev5/Carrot-RPC-Example)  
+## Full example
+https://github.com/Sobolev5/Carrot-RPC-Example  
  
 
 
