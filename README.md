@@ -34,7 +34,7 @@ async def call_sum_a_and_b():
     # get response dict from microservice «BB»
     carrot = await CarrotCall(AMQP_URI).connect()
     response_from_BB = await carrot.call(d, "BB:sum_a_and_b", timeout=5)    
-    sprint(response_from_BB) # {"sum": 3}
+    print(response_from_BB) # {"sum": 3}
 
     # you can send request to another microservice without reply (like standart call):
     await carrot.call(dct, "BB:sum_a_and_b", without_reply=True)
@@ -54,7 +54,6 @@ import asyncio
 import aiormq
 from pydantic import BaseModel
 from carrot import carrot_ask
-from simple_print import sprint
 from fastapi import FastAPI
 from fastapi import APIRouter
 
@@ -71,7 +70,7 @@ class SumAAndB(BaseModel):
 # protect called function with pydantic schema
 @carrot_ask(SumAAndB)
 async def sum_a_and_b(incoming_dict: dict) -> dict:
-    sprint(incoming_dict, c="green")
+    print(incoming_dict, c="green")
     dct = {}
     dct["sum"] = incoming_dict["number_a"] + incoming_dict["number_b"]
     return dct
@@ -80,7 +79,7 @@ async def sum_a_and_b(incoming_dict: dict) -> dict:
 async def amqp_router():
     connection = await aiormq.connect(AMQP_URI)
     channel = await connection.channel()
-    sprint(f"AMQP:     ready [yes]", c="green")
+    print(f"AMQP:     ready [yes]", c="green")
     sum_a_and_b_queue = await channel.queue_declare(f"BB:sum_a_and_b", durable=False)
     await channel.basic_consume(sum_a_and_b_queue.queue, sum_a_and_b, no_ack=False)  
     
