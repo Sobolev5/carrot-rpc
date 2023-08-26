@@ -93,7 +93,6 @@ def carrot_ask(schema=None, force_ask=True):
                 ) from exc
 
             if incoming_data:
-
                 try:
                     outcoming_data = await func(incoming_data)
                     if not isinstance(outcoming_data, dict):
