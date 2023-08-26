@@ -58,7 +58,7 @@ from fastapi import FastAPI
 from fastapi import APIRouter
 
 
-# set AMQP connection:
+# defer AMQP connection:
 AMQP_URI = "amqp://admin:password@127.0.0.1/vhost"
 
 # make pydantic schema:
@@ -87,7 +87,6 @@ app = FastAPI()
 
 @app.on_event("startup")
 async def startup_aiormq_router():
-    """Запускаем роутер aiormq."""
     loop = asyncio.get_running_loop()
     loop.create_task(amqp_router())
 ```
