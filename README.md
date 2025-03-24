@@ -95,8 +95,7 @@ async def startup_aiormq_router():
     loop.create_task(amqp_router())
 ```
 
-## Full example
-https://github.com/Sobolev5/Carrot-RPC-Example  
+
  
 
 
